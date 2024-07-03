@@ -1,6 +1,10 @@
+import asyncio
 import os
 import discord
+from discord.ext import commands
 from dotenv import load_dotenv
+
+from importlib.util import resolve_name
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -8,31 +12,22 @@ TOKEN = os.getenv("DISCORD_TOKEN")
 intents = discord.Intents(guilds=True)
 intents.guilds = True
 
-bot = discord.Bot(
-    intents=intents,
-    activity=discord.Activity(
-        type=discord.ActivityType.watching, name="for slash commands!"
-    ),
-)
+bot = commands.Bot(command_prefix=">", intents=intents)
 
 cogs_list = [
-    "bot.commands.general_cog",
-    "bot.commands.admin_cog",
-    "bot.commands.guild_cog",
     "bot.commands.character_cog",
-    "bot.commands.announcement_cog",
 ]
 
 
-def load_extensions():
+async def load_extensions():
     """Load the cogs from the cogs_list"""
     for cog in cogs_list:
-        bot.load_extension(cog)
+        await bot.load_extension(resolve_name(cog, __package__))
 
 
-def main():
-    load_extensions()
+async def main():
+    await load_extensions()
     bot.run(TOKEN)
 
 
-main()
+asyncio.run(main())
