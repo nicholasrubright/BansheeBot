@@ -1,26 +1,24 @@
 from typing import Optional
 
 import discord
-from discord import app_commands
+from discord.commands import SlashCommandGroup
 from discord.ext import commands
 
-from bot.raiderIO import raiderIO
-
-# import bot.raiderIO as raiderIO
+import bot.raiderIO as raiderIO
 
 
-class Character(commands.Cog, app_commands.GroupCog):
-
-    character_group = app_commands.Group(name="character_group")
+class Character(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
-        super().__init__()
         self.bot = bot
-
         print("Character cog is initializing...")
 
-    @character_group.command(name="get_char")
-    async def get_char(self, ctx, name: str, realm: Optional[str] = "Dalaran"):
+    character = SlashCommandGroup(
+        name="character", description="All commands related to characters"
+    )
+
+    @character.command(name="get_char")
+    async def get_char(self, ctx, name: str, realm: str = "Dalaran"):
         try:
             discord_user_id = ctx.author.id
             character_io = await raiderIO.get_character(name, realm)

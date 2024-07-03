@@ -31,7 +31,7 @@ async def get_character(name: str, realm="Dalaran", region="us") -> Optional[Cha
 
                 if response.status_code == 200:
                     if response.json()["guild"] is None:
-                        guild_name = None
+                        guild_name = ""
                     else:
                         guild_name = response.json()["guild"]["name"]
                     faction = response.json()["faction"]
@@ -51,6 +51,7 @@ async def get_character(name: str, realm="Dalaran", region="us") -> Optional[Cha
                         class_name=player_class,
                         achievement_points=achievement_points,
                         item_level=item_level,
+                        score=0,
                     )
                     return character
                 else:
